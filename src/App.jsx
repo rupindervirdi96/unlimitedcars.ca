@@ -56,6 +56,7 @@ const T = {
       phone:     'Please enter a valid phone number',
       email:     'Please enter a valid email address',
     },
+    emailHint:   'e.g. you@gmail.com · yahoo.com · hotmail.com · outlook.com · icloud.com',
   },
   fr: {
     subtitle:     'Concessionnaire · Montréal, QC',
@@ -75,13 +76,17 @@ const T = {
       phone:     'Veuillez entrer un numéro de téléphone valide',
       email:     'Veuillez entrer une adresse courriel valide',
     },
+    emailHint:   'ex. vous@gmail.com · yahoo.com · hotmail.com · outlook.com · icloud.com',
   },
 }
 
 // ── Field validators ────────────────────────────────────────────────────────
 const VALIDATORS = {
   phone:     (v) => /^\D*(\d\D*){10}$/.test(v.trim()),
-  email:     (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()),
+  email: (v) => {
+    const ALLOWED = /^[^\s@]+@(gmail|yahoo|hotmail|outlook|icloud|live|msn|me|mac|proton|protonmail|aol|ymail|googlemail|shaw|rogers|videotron|bell|telus|sympatico|cogeco|eastlink|sasktel)\.(com|ca|net|org|fr|co\.uk|co)$/i
+    return ALLOWED.test(v.trim())
+  },
   birthdate: (v) => {
     const d = v.replace(/\D/g, '')
     if (d.length < 8) return false
@@ -228,32 +233,14 @@ export default function App() {
     <div className="min-h-screen bg-[#0b0d1a] flex flex-col">
 
       {/* Top bar */}
-      <div className="flex items-center justify-between px-6 py-4">
-        <a
-          href="https://wa.me/14389981746"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1.5 text-white/35 hover:text-[#25D366] transition-colors text-sm"
-        >
-          <FaWhatsapp size={16} />
-          <span className="hidden sm:inline">WhatsApp</span>
-        </a>
-        <div className="flex items-center gap-3">
-          <LangToggle />
-          <a
-            href="tel:+14389981746"
-            className="flex items-center gap-1.5 text-white/35 hover:text-white transition-colors text-sm"
-          >
-            <FiPhone size={13} />
-            <span className="hidden sm:inline">(438) 998-1746</span>
-          </a>
-        </div>
+      <div className="flex items-center justify-end px-6 py-4">
+        <LangToggle />
       </div>
 
       {/* Brand hero */}
       <div className="flex flex-col items-center pt-6 pb-4 px-4">
         <MdDirectionsCar className="text-red-500 text-4xl mb-4" />
-        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-widest text-white uppercase text-center mb-2">
+        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-widest text-white uppercase text-center mb-2">
           UnlimitedCars<span className="text-red-500">.ca</span>
         </h1>
         <p className="text-white/35 tracking-[0.25em] uppercase text-xs font-semibold mb-7">
@@ -420,7 +407,12 @@ export default function App() {
                     }`}
                   />
                   {fieldError && (
-                    <p className="text-red-400 text-xs mt-2">{txt.invalid[current.id]}</p>
+                    <div className="mt-2 space-y-1">
+                      <p className="text-red-400 text-xs">{txt.invalid[current.id]}</p>
+                      {current.id === 'email' && (
+                        <p className="text-white/30 text-xs">{txt.emailHint}</p>
+                      )}
+                    </div>
                   )}
                 </>
               )}
