@@ -4,6 +4,11 @@ services:
     runtime: static
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
+    envVars:
+      - key: VITE_WEB3FORMS_KEY
+        sync: false
+      - key: VITE_GEOAPIFY_API_KEY
+        sync: false
     headers:
       - path: /*
         name: Cache-Control
